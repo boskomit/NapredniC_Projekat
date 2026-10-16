@@ -1,0 +1,5 @@
+50. Napisati biblioteku koja omogućava pravljenje asocijativne memorije kod koje je ključ
+struktura podataka koja sadrži pet celobrojnih polja, tj. preslikavanja pomenutog ključa na
+neke druge elemente. Biblioteku realizovati kao dinamičku sa povezivanjem tokom izvršavanja.
+Tu biblioteku uključiti u glavni program koji će obavljati komunikaciju sa okruženjem
+(unos/ispis i sl.).
