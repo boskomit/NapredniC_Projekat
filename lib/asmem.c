@@ -1,8 +1,5 @@
 #include "asmem.h"
-#include <inttypes.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 
 struct node{
     Key key;
@@ -21,10 +18,23 @@ static int8_t key_equal(Key key1, Key key2){
 }
 
 static void print_node(const struct node* node){
-    printf("Kljuc: (%d %d %d %d %d) -> Vrijednost: %d\n",node->key.keyA,node->key.keyB,node->key.keyC,node->key.keyD,node->key.keyE,node->data);
+    printf("Kljuc: (%d %d %d %d %d) -> Vrijednost: %d\n",
+            node->key.keyA, node->key.keyB, node->key.keyC, node->key.keyD,node->key.keyE, node->data);
 }
 
 int8_t asmem_insert(Key key, int32_t data){
+
+    struct node *current = head;
+
+    while (current != NULL) {
+        if (key_equal(current->key, key)) {
+            /* Kljuc vec postoji. */
+            return KEY_EXISTS;
+        }
+
+        current = current->next;
+    }
+
     struct node* newNode = malloc(sizeof(struct node));
 
     if(newNode != NULL){
@@ -32,7 +42,7 @@ int8_t asmem_insert(Key key, int32_t data){
         newNode->data = data;
         newNode->next = NULL;
     } else {
-        return 0;
+        return MALLOC_ERROR;
     }
 
     if(head == NULL){
@@ -42,13 +52,13 @@ int8_t asmem_insert(Key key, int32_t data){
         head = newNode;
     }
 
-    return 1;
+    return SUCCESS;
 }
 
 int8_t asmem_find_data(Key key, int32_t* result){
 
     if(head == NULL || result == NULL){
-        return -1;
+        return LIST_EMPTY;
     } else {
         struct node* current = head;
 
@@ -56,20 +66,20 @@ int8_t asmem_find_data(Key key, int32_t* result){
 
             if(key_equal(current->key, key)){
                 *result = current->data;
-                return 1;
+                return SUCCESS;
             }
 
             current = current->next;
         }
 
-        return 0;
+        return NOT_FOUND;
     }
 }
 
-int8_t asmem_remove(Key key){
+int8_t asmem_delete(Key key){
 
     if(head == NULL){
-        return -1;
+        return LIST_EMPTY;
     } else {
         struct node* current = head;
         struct node* previous = NULL;
@@ -83,18 +93,19 @@ int8_t asmem_remove(Key key){
                     previous->next = current->next;
                 }
                 free(current);
-                return 1;
+                return SUCCESS;
             }
 
             previous = current;
             current = current->next;
         }
 
-        return 0;
+        return NOT_FOUND;
     }
 }
 
 void asmem_print(void){
+
     struct node* current = head;
 
     if(current == NULL){
