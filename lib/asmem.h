@@ -2,19 +2,15 @@
 #define ASMEM_H_
 
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#include <inttypes.h>
-
-#include <sys/types.h>
-#include <dlfcn.h>
-
-#define LIST_EMPTY -1
-#define MALLOC_ERROR 0
-#define SUCCESS 1
-#define KEY_EXISTS 2
-#define NOT_FOUND 3
+typedef enum: uint8_t
+{
+    ASMEM_OK = 0,
+    ASMEM_KEY_EXISTS,
+    ASMEM_NOT_FOUND,
+    ASMEM_NO_MEMORY,
+    ASMEM_INVALID_ARG
+}AsmemStatus;
 
 typedef struct{
     uint8_t keyA;
@@ -24,10 +20,12 @@ typedef struct{
     uint8_t keyE;
 }Key;
 
-int8_t asmem_insert(Key key, int32_t data);
-int8_t asmem_find_data(Key key, int32_t* result);
-int8_t asmem_delete(Key key);
-void asmem_print(void);
+typedef void (*AsmemVisitFn)(Key key, int32_t data, void* user);
+
+AsmemStatus asmem_insert(Key key, int32_t data);
+AsmemStatus asmem_find_data(Key key, int32_t* result);
+AsmemStatus asmem_delete(Key key);
+void asmem_foreach(AsmemVisitFn visit, void* user);
 void asmem_destroy(void);
 
 #endif

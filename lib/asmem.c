@@ -1,5 +1,11 @@
 #include "asmem.h"
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <inttypes.h>
 
 struct node{
     Key key;
@@ -9,7 +15,7 @@ struct node{
 
 static struct node* head = NULL;
 
-static int8_t key_equal(Key key1, Key key2){
+static bool key_equal(Key key1, Key key2){
     return (key1.keyA == key2.keyA
         && key1.keyB == key2.keyB
         && key1.keyC == key2.keyC
@@ -17,105 +23,77 @@ static int8_t key_equal(Key key1, Key key2){
         && key1.keyE == key2.keyE);
 }
 
-static void print_node(const struct node* node){
-    printf("Kljuc: (%d %d %d %d %d) -> Vrijednost: %d\n",
-            node->key.keyA, node->key.keyB, node->key.keyC, node->key.keyD,node->key.keyE, node->data);
-}
+AsmemStatus asmem_insert(Key key, int32_t data){
 
-int8_t asmem_insert(Key key, int32_t data){
+    for(const struct node* current = head; current != NULL; current = current->next){
 
-    struct node *current = head;
-
-    while (current != NULL) {
-        if (key_equal(current->key, key)) {
-            /* Kljuc vec postoji. */
-            return KEY_EXISTS;
+        if(key_equal(current->key, key)){
+            return ASMEM_KEY_EXISTS;
         }
-
-        current = current->next;
     }
 
-    struct node* newNode = malloc(sizeof(struct node));
+    struct node* new_node = malloc(sizeof(struct node));
 
-    if(newNode != NULL){
-        newNode->key = key;
-        newNode->data = data;
-        newNode->next = NULL;
-    } else {
-        return MALLOC_ERROR;
+    if(new_node == NULL){
+        return ASMEM_NO_MEMORY;
     }
 
-    if(head == NULL){
-        head = newNode;
-    } else{
-        newNode->next = head;
-        head = newNode;
-    }
+    new_node->key = key;
+    new_node->data = data;
+    new_node->next = head;
 
-    return SUCCESS;
+    head = new_node;
+
+    return ASMEM_OK;
 }
 
-int8_t asmem_find_data(Key key, int32_t* result){
+AsmemStatus asmem_find_data(Key key, int32_t* result){
 
-    if(head == NULL || result == NULL){
-        return LIST_EMPTY;
-    } else {
-        struct node* current = head;
+    assert(result != NULL);
+    if(result == NULL){
+        return ASMEM_INVALID_ARG;
+    }
 
-        while(current != NULL){
+    for(const struct node* current = head; current != NULL; current = current->next){
 
-            if(key_equal(current->key, key)){
-                *result = current->data;
-                return SUCCESS;
+        if(key_equal(current->key, key)){
+            *result = current->data;
+            return ASMEM_OK;
+        }
+    }
+
+    return ASMEM_NOT_FOUND;
+}
+
+AsmemStatus asmem_delete(Key key){
+
+    struct node* previous = NULL;
+
+    for(struct node* current = head; current != NULL; current = current->next){
+        if(key_equal(key, current->key)){
+            if(previous == NULL){
+                head = current->next;
+            } else {
+                previous->next = current->next;
             }
-
-            current = current->next;
+            free(current);
+            return ASMEM_OK;
         }
-
-        return NOT_FOUND;
+        previous = current;
     }
+
+    return ASMEM_NOT_FOUND;
 }
 
-int8_t asmem_delete(Key key){
+void asmem_foreach(AsmemVisitFn visit, void* user){
 
-    if(head == NULL){
-        return LIST_EMPTY;
-    } else {
-        struct node* current = head;
-        struct node* previous = NULL;
-
-        while(current != NULL){
-
-            if(key_equal(current->key, key)){
-                if(previous == NULL){
-                    head = current->next;
-                } else {
-                    previous->next = current->next;
-                }
-                free(current);
-                return SUCCESS;
-            }
-
-            previous = current;
-            current = current->next;
-        }
-
-        return NOT_FOUND;
+    assert(visit != NULL);
+    if(visit == NULL){
+        return;
     }
-}
 
-void asmem_print(void){
-
-    struct node* current = head;
-
-    if(current == NULL){
-        printf("Lista je prazna\n");
-    } else{
-        while(current != NULL){
-
-            print_node(current);
-            current = current->next;
-        }
+    for(const struct node* current = head; current != NULL; current = current->next){
+        visit(current->key, current->data, user);
     }
 }
 
