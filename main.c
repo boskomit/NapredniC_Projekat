@@ -102,35 +102,17 @@
  *  - Dir 4.6: koriste se int (povratna vrijednost main i getchar) i long (povratna
  *    vrijednost strtol) umjesto tipova sa fiksnom sirinom, jer te tipove odredjuju
  *    potpisi funkcija iz standardne biblioteke i ne mogu se promijeniti.
+ *
  *  Ispostovano: svaka funkcija ima jednu izlaznu tacku (15.5), exit se ne koristi
  *  (21.8), sve if/else/petlje imaju zagrade, svaki if ... else if lanac zavrsava sa
  *  else (15.7), svaki switch ima default i svaka grana zavrsava sa break, nema goto
  *  ni rekurzije, koriste se tipovi fiksne sirine (uint8_t, int32_t), bool iz C23.
  *
  * TESTIRANJE
- *  Testiranje je automatizovano skriptom test.sh (pokrece se sa: make test).
- *  Program i biblioteka se prevode sa -fsanitize=address,undefined, pa se uz
- *  funkcionalne greske hvataju i curenje memorije, upotreba oslobodjene memorije,
- *  prekoracenja i nedefinisano ponasanje. Skripta salje programu pripremljene
- *  ulaze preko stdin i provjerava izlaz (i da sanitizeri nisu prijavili gresku).
- *  Pokriveni slucajevi:
- *  - prazna lista: ispis, pretraga i brisanje;
- *  - unos pa pretraga, i unos duplikata (vrijednost se ne mijenja, u listi ostaje
- *    jedan par);
- *  - brisanje glave, sredine, repa i jedinog elementa, brisanje nepostojeceg kljuca;
- *  - granicne vrijednosti: kljuc 0 0 0 0 0 i 255 255 255 255 255, vrijednosti
- *    INT32_MIN i INT32_MAX;
- *  - neispravan kljuc (256, -1, premalo ili previse brojeva, slova, zarez, preveliki
- *    broj, prazan red) i neispravna vrijednost (slova, 2147483648, -2147483649,
- *    12abc, prazan red): provjerava se poruka o gresci i da lista ostaje nepromijenjena;
- *  - neispravan izbor u meniju, nepostojeca opcija, predugacak red (500 znakova);
- *  - kraj ulaza (EOF) odmah i usred unosa: program mora cisto zavrsiti;
- *  - veliki broj parova (3000): ispis, brisanje i oslobadjanje bez curenja;
- *  - nepostojeca biblioteka i biblioteka bez trazenih simbola: poruka o gresci i
- *    izlazni kod 1.
- *  Razlog za ovakav pristup: pojedinacne granice (prazna lista, glava/sredina/rep,
- *  0 i 255, INT32_MIN/MAX) su mjesta gdje se najcesce prave greske u radu sa
- *  povezanom listom i ulazom, a sanitizeri hvataju greske koje se ne vide u izlazu.
+ * U fajlu test.txt se nalazi 30 testnih slucaja koji testiraju sve vrste ulaza
+ * (ispravne i neispravne), edge-case slucajeve i ostale vrste gresaka koje mogu
+ * da se dese prilikom pokretanja programa.
+ *
  */
 
 #include "asmem.h"
