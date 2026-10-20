@@ -1,0 +1,435 @@
+TESTNI SLUCAJEVI - ASOCIJATIVNA MEMORIJA
+========================================
+
+KAKO SE KORISTI
+---------------
+Pokreni program iz korijenskog foldera projekta:   ./program
+
+Meni:  1 = unos para    2 = pretraga    3 = ispis svih    4 = brisanje    0 = izlaz
+
+Pod "UNOS" je svaki red onako kako ga kucas (poslije svakog reda Enter).
+Mozes ga kucati red po red, ili zalijepiti cijeli blok odjednom.
+Svaki test pokreces iznova (svaki put novi ./program), da lista krene prazna.
+Zadnji red 0 je izlaz iz programa.
+
+Isti test mozes pokrenuti i jednom komandom, npr. test 4:
+    printf '1\n1 2 3 4 5\n100\n2\n1 2 3 4 5\n0\n' | ./program
+
+Kratice u ocekivanom izlazu:  [unos kljuca] = program ispise "Unesite kljuc u formatu [x x x x x]"
+                              [unos vrijednosti] = program ispise "Unesite vrijednost: "
+Navedene su samo bitne poruke, ne cijeli meni.
+
+
+=======================================================================
+1. OSNOVNE OPERACIJE
+=======================================================================
+
+T1  Prazna lista - ispis
+    UNOS:
+        3
+        0
+    OCEKIVANO:  Lista je prazna
+
+T2  Prazna lista - pretraga
+    UNOS:
+        2
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Vrijednost za dati kljuc ne postoji
+
+T3  Prazna lista - brisanje
+    UNOS:
+        4
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Vrijednost za dati kljuc ne postoji!
+
+T4  Unos pa pretraga
+    UNOS:
+        1
+        1 2 3 4 5
+        100
+        2
+        1 2 3 4 5
+        0
+    OCEKIVANO:  Vrijednost: 100
+
+T5  Pretraga kljuca koji ne postoji (lista nije prazna)
+    UNOS:
+        1
+        1 2 3 4 5
+        100
+        2
+        9 9 9 9 9
+        0
+    OCEKIVANO:  Vrijednost za dati kljuc ne postoji
+
+T6  Ispis vise parova (najnoviji se ispisuje prvi)
+    UNOS:
+        1
+        1 1 1 1 1
+        10
+        1
+        2 2 2 2 2
+        20
+        1
+        3 3 3 3 3
+        30
+        3
+        0
+    OCEKIVANO:
+        Kljuc: (3 3 3 3 3) -> Vrijednost: 30
+        Kljuc: (2 2 2 2 2) -> Vrijednost: 20
+        Kljuc: (1 1 1 1 1) -> Vrijednost: 10
+
+T7  Pretraga prvog, srednjeg i posljednjeg unesenog
+    UNOS:  (isti unos tri para kao u T6, pa:)
+        2
+        1 1 1 1 1
+        2
+        2 2 2 2 2
+        2
+        3 3 3 3 3
+        0
+    OCEKIVANO:  Vrijednost: 10, zatim Vrijednost: 20, zatim Vrijednost: 30
+
+T8  Duplikat kljuca - vrijednost se NE mijenja
+    UNOS:
+        1
+        1 2 3 4 5
+        100
+        1
+        1 2 3 4 5
+        200
+        2
+        1 2 3 4 5
+        3
+        0
+    OCEKIVANO:  Dati kljuc vec postoji!
+                Vrijednost: 100            (ne 200)
+                u ispisu (3) samo JEDAN par: Kljuc: (1 2 3 4 5) -> Vrijednost: 100
+
+
+=======================================================================
+2. BRISANJE
+=======================================================================
+Za T9-T12 prvo unesi tri para kao u T6 (kljucevi 1 1 1 1 1, 2 2 2 2 2, 3 3 3 3 3),
+pa dodaj navedeno brisanje, a zatim ispis (3).
+
+T9  Brisanje GLAVE (zadnje unesenog, kljuc 3 3 3 3 3)
+    DODATNO:
+        4
+        3 3 3 3 3
+        3
+        0
+    OCEKIVANO:  Par je obrisan
+                ispis: samo (2 2 2 2 2) i (1 1 1 1 1)
+
+T10 Brisanje SREDINE (kljuc 2 2 2 2 2)
+    DODATNO:
+        4
+        2 2 2 2 2
+        3
+        0
+    OCEKIVANO:  Par je obrisan
+                ispis:  Kljuc: (3 3 3 3 3) -> Vrijednost: 30
+                        Kljuc: (1 1 1 1 1) -> Vrijednost: 10
+
+T11 Brisanje REPA (prvog unesenog, kljuc 1 1 1 1 1)
+    DODATNO:
+        4
+        1 1 1 1 1
+        3
+        0
+    OCEKIVANO:  Par je obrisan
+                ispis: samo (3 3 3 3 3) i (2 2 2 2 2)
+
+T12 Brisanje kljuca koji ne postoji
+    DODATNO:
+        4
+        9 9 9 9 9
+        3
+        0
+    OCEKIVANO:  Vrijednost za dati kljuc ne postoji!
+                ispis: sva tri para ostaju
+
+T13 Brisanje JEDINOG elementa
+    UNOS:
+        1
+        1 1 1 1 1
+        10
+        4
+        1 1 1 1 1
+        3
+        0
+    OCEKIVANO:  Par je obrisan
+                Lista je prazna
+
+T14 Brisanje svih redom pa ponovni unos istog kljuca sa drugom vrijednoscu
+    UNOS:
+        1
+        1 1 1 1 1
+        10
+        4
+        1 1 1 1 1
+        1
+        1 1 1 1 1
+        7
+        2
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Par je obrisan
+                Vrijednost: 7              (ne 10)
+
+T15 Dvostruko brisanje istog kljuca
+    UNOS:
+        1
+        1 1 1 1 1
+        10
+        4
+        1 1 1 1 1
+        4
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Par je obrisan
+                Vrijednost za dati kljuc ne postoji!
+
+
+=======================================================================
+3. GRANICNE VRIJEDNOSTI
+=======================================================================
+
+T16 Najmanji kljuc
+    UNOS:
+        1
+        0 0 0 0 0
+        5
+        2
+        0 0 0 0 0
+        0
+    OCEKIVANO:  Vrijednost: 5
+
+T17 Najveci kljuc
+    UNOS:
+        1
+        255 255 255 255 255
+        6
+        2
+        255 255 255 255 255
+        0
+    OCEKIVANO:  Vrijednost: 6
+
+T18 Najveca vrijednost (INT32_MAX)
+    UNOS:
+        1
+        1 1 1 1 1
+        2147483647
+        2
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Vrijednost: 2147483647
+
+T19 Najmanja vrijednost (INT32_MIN)
+    UNOS:
+        1
+        1 1 1 1 1
+        -2147483648
+        2
+        1 1 1 1 1
+        0
+    OCEKIVANO:  Vrijednost: -2147483648
+
+T20 Negativna vrijednost i nula
+    UNOS:
+        1
+        1 1 1 1 1
+        -5
+        1
+        2 2 2 2 2
+        0
+        3
+        0
+    OCEKIVANO:  ispis sadrzi Vrijednost: 0 i Vrijednost: -5
+
+T21 Razmaci oko brojeva su dozvoljeni
+    UNOS:
+        1
+          0   128  200 255   7
+         42
+        3
+        0
+    OCEKIVANO:  Kljuc: (0 128 200 255 7) -> Vrijednost: 42
+
+T22 Kljucevi koji se razlikuju samo u jednom polju su RAZLICITI
+    UNOS:
+        1
+        1 2 3 4 5
+        11
+        1
+        1 2 3 4 6
+        22
+        2
+        1 2 3 4 5
+        2
+        1 2 3 4 6
+        0
+    OCEKIVANO:  nema poruke "vec postoji"
+                Vrijednost: 11, zatim Vrijednost: 22
+
+
+=======================================================================
+4. NEISPRAVAN UNOS KLJUCA
+=======================================================================
+Za SVAKI kljuc iz tabele pokreni poseban test sa ovim unosom (umjesto <KLJUC> upisi kljuc):
+        1
+        <KLJUC>
+        3
+        0
+OCEKIVANO u svim slucajevima:  Neispravan unos kljuca
+                               zatim (ispis) Lista je prazna   -> nista nije ubaceno
+
+    <KLJUC>                          Sta se provjerava
+    -----------------------------    ---------------------------------------
+    256 0 0 0 0                      preko opsega (max je 255)
+    -1 0 0 0 0                       negativan broj
+    1 2 3 4                          premalo brojeva
+    1 2 3 4 5 6                      previse brojeva
+    a b c d e                        slova
+    1,2,3,4,5                        zarezi umjesto razmaka
+    12345                            jedan broj
+    1 2 3 4 5x                       smece na kraju
+    99999999999999999999 0 0 0 0     ogroman broj
+    (prazan red - samo Enter)        prazan unos
+
+T-pretraga/brisanje sa neispravnim kljucem:
+        2                  (ili 4)
+        256 0 0 0 0
+        0
+OCEKIVANO:  Neispravan unos kljuca
+
+
+=======================================================================
+5. NEISPRAVNA VRIJEDNOST
+=======================================================================
+Za SVAKU vrijednost iz tabele pokreni poseban test sa ovim unosom:
+        1
+        1 1 1 1 1
+        <VRIJEDNOST>
+        3
+        0
+OCEKIVANO u svim slucajevima:  Neispravna vrijednost
+                               zatim (ispis) Lista je prazna   -> nista nije ubaceno
+
+    <VRIJEDNOST>                     Sta se provjerava
+    -----------------------------    ---------------------------------------
+    abc                              slova
+    12abc                            broj sa smecem
+    1.5                              decimalni broj
+    2147483648                       jedan preko INT32_MAX
+    -2147483649                      jedan ispod INT32_MIN
+    99999999999999999999             ogroman broj
+    (prazan red - samo Enter)        prazan unos
+
+
+=======================================================================
+6. NEISPRAVAN UNOS U MENIJU
+=======================================================================
+Za SVAKI unos iz tabele pokreni poseban test:
+        <IZBOR>
+        3
+        0
+OCEKIVANO: program ne pada, ispise poruku iz tabele, nastavi sa radom
+           (zatim Lista je prazna, pa izlaz)
+
+    <IZBOR>                          OCEKIVANA PORUKA
+    -----------------------------    ---------------------------------------
+    abc                              Neispravan unos.
+    1.5                              Neispravan unos.
+    99999999999                      Neispravan unos.
+    (prazan red - samo Enter)        Neispravan unos.
+    7                                Nepostojeca opcija. Pokusaj ponovo.
+    -1                               Nepostojeca opcija. Pokusaj ponovo.
+    5                                Nepostojeca opcija. Pokusaj ponovo.
+
+
+=======================================================================
+7. POSEBNI SLUCAJEVI (komande za terminal)
+=======================================================================
+
+T23 Predugacak red u meniju (500 znakova)
+    KOMANDA:   printf '%0500d\n3\n0\n' 0 | ./program
+    OCEKIVANO: Neispravan unos.  pa  Lista je prazna    (program nastavlja)
+
+T24 Predugacak red kao kljuc
+    KOMANDA:   { echo 1; printf '%0500d\n' 0; echo 3; echo 0; } | ./program
+    OCEKIVANO: Neispravan unos kljuca  pa  Lista je prazna
+
+T25 Kraj ulaza (EOF) - program mora cisto izaci
+    KOMANDE:   printf '' | ./program; echo $?
+               printf '1\n' | ./program; echo $?
+               printf '1\n1 1 1 1 1\n' | ./program; echo $?
+    OCEKIVANO: program zavrsi sam (bez petlje i bez pada), izlazni kod 0
+    (interaktivno isto dobijes sa Ctrl+D umjesto unosa)
+
+T26 Zadnji red bez novog reda
+    KOMANDA:   printf '1\n5 5 5 5 5\n7\n3' | ./program
+    OCEKIVANO: Kljuc: (5 5 5 5 5) -> Vrijednost: 7
+
+T27 Veliki broj parova (3000)
+    KOMANDE:
+        for i in $(seq 0 2999); do printf '1\n%d %d 0 0 0\n%d\n' $((i/256)) $((i%256)) $i; done > stres.txt
+        printf '3\n0\n' >> stres.txt
+        ./program < stres.txt | grep -c 'Kljuc: ('
+    OCEKIVANO: 3000
+    Provjera brzine (pretraga je O(n)):   time ./program < stres.txt > /dev/null
+
+T28 Brisanje svih 3000 parova
+    KOMANDE:
+        for i in $(seq 0 2999); do printf '4\n%d %d 0 0 0\n' $((i/256)) $((i%256)); done > brisi.txt
+        cat stres.txt | head -n -2 > svi.txt
+        cat brisi.txt >> svi.txt
+        printf '3\n0\n' >> svi.txt
+        ./program < svi.txt | tail -n 3
+    OCEKIVANO: pri kraju ispisa stoji  Lista je prazna
+
+
+=======================================================================
+8. GRESKE PRI UCITAVANJU BIBLIOTEKE
+=======================================================================
+
+T29 Biblioteka ne postoji (pokretanje iz pogresnog foldera)
+    KOMANDE:   cd /tmp
+               /PUTANJA/DO/program; echo $?
+    OCEKIVANO: Greska ./lib/libasmem.so: cannot open shared object file: No such file or directory
+               izlazni kod 1
+
+T30 Biblioteka postoji ali nema trazenih funkcija
+    KOMANDE:
+        mkdir -p /tmp/stub/lib
+        echo 'int x;' > /tmp/stub/s.c
+        gcc -shared -fPIC -o /tmp/stub/lib/libasmem.so /tmp/stub/s.c
+        cd /tmp/stub
+        /PUTANJA/DO/program; echo $?
+    OCEKIVANO: pet poruka  Greska: ./lib/libasmem.so: undefined symbol: asmem_...
+               (po jedna za asmem_insert, asmem_find_data, asmem_delete,
+               asmem_foreach, asmem_destroy), izlazni kod 1
+
+
+=======================================================================
+9. PROVJERA MEMORIJE
+=======================================================================
+Ovi testovi ne gledaju izlaz programa, nego da li ima curenja memorije
+i nedefinisanog ponasanja. Pokreni T6, T10, T27 i T28 ovako:
+
+    Sa valgrind-om (obican program, bez sanitizera):
+        make clean && make
+        valgrind --leak-check=full ./program < stres.txt
+    OCEKIVANO: "All heap blocks were freed -- no leaks are possible"
+
+    Sa sanitizerima (ako su instalirani libasan i libubsan):
+        make sanitize
+        ./program < stres.txt
+    OCEKIVANO: nema nikakvih ispisa  ERROR: AddressSanitizer / runtime error
+
+Vazno: program mora osloboditi memoriju i kad se izadje bez brisanja parova
+(izlaz opcijom 0 poziva asmem_destroy), i kad je lista prazna.

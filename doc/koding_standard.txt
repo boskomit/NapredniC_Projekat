@@ -1,34 +1,53 @@
-Kod treba da bude pisan po C23 standardu. Dakle, koristite sve mogućnosti koje taj standard pruža, ali i budite u okviru svih ograničenja.
+﻿
+1. За увлачење се користе табови, не размаци.
 
-Projekat mora imati main.c datoteku u kojoj će biti main funkcija. U main.c datoteci odmah na početku treba da bude blok
-komentara u kojem ćete (u slobodnoj formi) navesti opis zadatka, kratak opis rešenja, svoje ime i prezime i broj indeksa,
-kao i sve važne napomene vezane za program i njegovo prevođenje.
+2. Сваки нови ред исте наредбе увлачи се за по један таб. Изузетак су витичасте заграде.
+	Нпр.:
+		if (i < 0
+			|| j > 0)
+		{
+			printf("%d", i);
+			++j;
+		}
 
-Kod pisati u skladu sa standardom kodiranja koji se nalazi u datoteci koding_standard.txt.
+3. Отворена и одговарајућа затворена витичаста заграда морају бити у истој колони. Блок увек почиње у новом реду.
+	Нпр.:
+		for (i = 0; i < n; ++i)
+		{
+			x += niz[i]; // тело је увучено, али саме витичасте заграде су у истој колони као и for наредба
+		}
 
-Kod treba da bude napisan što prenosivije. Dakle, da uspešno radi i na nekim drugim platformama, sa nekim drugim
-kompajlerima. Ukoliko negde mroate da uvedete neki neprenosivi element koda važno je da ga jasno spomenete i objasnite
-na mestu primene, kao i u komentaru na početku main.c datoteke.
+4. Декларација једне променљиве у једном реду.
+  Погрешно:
+   char src, *dst, temp;
+  Исправно:
+   char src;
+   char* dst;
+   char* temp;
+   
+5. Звездица код декларације показивача треба да буду спојени са типом на који се показују..
+	Нпр.:
+		void* x; а не void *x;
+	
+6. Бинарни оператори имају размак и са леве и са десне стране. 
+	Нпр.:
+	 c = a + b;
 
-U nekim zadacima se eskplicitno pominju moduli (posebne jedinice prevođenja, tj. posebne datoteke sa izvornim kodom),
-ali trudite se da sami uvedete module tamo gde ima smisla iako eksplicitno nije navedeno.
+7. Унарни оператори су прилепљени уз операнд.
+	Нпр.:
+	 b++;
 
-Zadaci su namerno formulisani labavo. Ne navode se konkretni tipovi podataka na mnogim mestima (recimo, kad god
-spominjemo listu ne navodi se kog tipa su njeni elementi), a i mogući broj elemenata i veličine isto nisu specificirane.
+8. Отворена заграда код позива функција је прилепљена уз назив функције.
+	Нпр.:
+	 foo(a);
 
-Koliko je moguće, učinite da program i njegovi moduli rade što opštije, a i vi ih onda upotrebite za konkretne primene
-tokom testiranja. Ako neke pretpostavke morate napraviti, slobodno ih napravite, ali ih obrazložite u komentaru na
-početku main.c datoteke. U vezi sa tim, razmislite dobro i o ograničenjima vašeg programa (npr. maksimalna veličina i
-količina podataka na ulazu ili struktura podataka i sl.), i napišite ih u komentaru u main.c datoteci. Takođe, koristite
-asserte gde god smatrate za potrebno.
+9. Параметри и аргументи функција се одвајају једним зарезом и размаком.
+	Нпр.:
+		void foo(int i, float f);  // i, f - параметри функције
+		foo(34, 3.4)               // 34, 3.4 - аргументи функције		
 
-Svi programi treba da budu pisani tako da zauzimaju što manje memorije i da rade što brže, jer uvek treba da imate na
-umu da radimo sa sistemima koji imaju ograničene resurse. U slučajevima kada su suprotstavljene težnje da program bude
-što manji i što brži, odaberite jedan od ta dva kriterijuma i to navedite u main.c datoteci.
+10. Отворена заграда код резервисаних речи (if, while, for, switch) је одвојена од разезрвисане речи.
+	Нпр.:
+		for (i = 0; i < n; ++i)
 
-Analizirajte da li je vaš program napisan po MISRA C standardu. Sasvim je u redu ako neka pravila niste ispoštovali u
-kodu (neka možda i nije moguće ispoštovati u konkrentom zadatku), ali obavezno to prokomentarišite i jasno naznačite u
-komentaru na početku main.c.
-
-Posebnu pažnju posvetite testiranju. To isto nosi deo ocene. Obično nije dovoljno samo probati za nekoliko ulaza i
-smatrati testiranje gotovo. Postupak testiranja koji ste obavili morate obrazložiti.
+11. Иницијализовати променљиве у моменту декларације (уколико је то могуће).	

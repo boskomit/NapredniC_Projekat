@@ -1,0 +1,34 @@
+Kod treba da bude pisan po C23 standardu. Dakle, koristite sve mogućnosti koje taj standard pruža, ali i budite u okviru svih ograničenja.
+
+Projekat mora imati main.c datoteku u kojoj će biti main funkcija. U main.c datoteci odmah na početku treba da bude blok
+komentara u kojem ćete (u slobodnoj formi) navesti opis zadatka, kratak opis rešenja, svoje ime i prezime i broj indeksa,
+kao i sve važne napomene vezane za program i njegovo prevođenje.
+
+Kod pisati u skladu sa standardom kodiranja koji se nalazi u datoteci koding_standard.txt.
+
+Kod treba da bude napisan što prenosivije. Dakle, da uspešno radi i na nekim drugim platformama, sa nekim drugim
+kompajlerima. Ukoliko negde mroate da uvedete neki neprenosivi element koda važno je da ga jasno spomenete i objasnite
+na mestu primene, kao i u komentaru na početku main.c datoteke.
+
+U nekim zadacima se eskplicitno pominju moduli (posebne jedinice prevođenja, tj. posebne datoteke sa izvornim kodom),
+ali trudite se da sami uvedete module tamo gde ima smisla iako eksplicitno nije navedeno.
+
+Zadaci su namerno formulisani labavo. Ne navode se konkretni tipovi podataka na mnogim mestima (recimo, kad god
+spominjemo listu ne navodi se kog tipa su njeni elementi), a i mogući broj elemenata i veličine isto nisu specificirane.
+
+Koliko je moguće, učinite da program i njegovi moduli rade što opštije, a i vi ih onda upotrebite za konkretne primene
+tokom testiranja. Ako neke pretpostavke morate napraviti, slobodno ih napravite, ali ih obrazložite u komentaru na
+početku main.c datoteke. U vezi sa tim, razmislite dobro i o ograničenjima vašeg programa (npr. maksimalna veličina i
+količina podataka na ulazu ili struktura podataka i sl.), i napišite ih u komentaru u main.c datoteci. Takođe, koristite
+asserte gde god smatrate za potrebno.
+
+Svi programi treba da budu pisani tako da zauzimaju što manje memorije i da rade što brže, jer uvek treba da imate na
+umu da radimo sa sistemima koji imaju ograničene resurse. U slučajevima kada su suprotstavljene težnje da program bude
+što manji i što brži, odaberite jedan od ta dva kriterijuma i to navedite u main.c datoteci.
+
+Analizirajte da li je vaš program napisan po MISRA C standardu. Sasvim je u redu ako neka pravila niste ispoštovali u
+kodu (neka možda i nije moguće ispoštovati u konkrentom zadatku), ali obavezno to prokomentarišite i jasno naznačite u
+komentaru na početku main.c.
+
+Posebnu pažnju posvetite testiranju. To isto nosi deo ocene. Obično nije dovoljno samo probati za nekoliko ulaza i
+smatrati testiranje gotovo. Postupak testiranja koji ste obavili morate obrazložiti.
