@@ -10,6 +10,7 @@
 
 constexpr size_t LINE_SIZE = 128U;
 constexpr size_t KEY_FIELDS = 5U;
+constexpr long KEY_MAX = 255;
 
 static bool read_line(char* buffer, size_t size);
 static const char* skip_spaces(const char* text);
@@ -27,6 +28,7 @@ static bool read_line(char* buffer, size_t size)
 			buffer[length - 1U] = '\0';
 			valid = true;
 		}
+		/* Ovaj kod cisti ostatak predugackog reda, tako da sljedeće citanje pocne od novog reda. */
 		else if (length == size - 1U)
 		{
 			/* Red je predug: odbaci ostatak reda. */
@@ -47,6 +49,8 @@ static bool read_line(char* buffer, size_t size)
 	return valid;
 }
 
+/* Koristi se kao provjera za kraj unesene linije preko terminala. Nakon broja smiju postojati samo razmaci, a zatim mora doci kraj stringa. */
+/* "123   " prolazi, "123abc" ne prolazi */
 static const char* skip_spaces(const char* text)
 {
 	const char* position = text;
@@ -59,7 +63,7 @@ static const char* skip_spaces(const char* text)
 	return position;
 }
 
-bool util_read_int32(int32_t* result)
+bool util_read_int32(int_least32_t* result)
 {
 	char line[LINE_SIZE] = {};
 	bool valid = false;
@@ -72,9 +76,9 @@ bool util_read_int32(int32_t* result)
 		const long number = strtol(line, &end, 10);
 
 		if (end != line && errno == 0 && *skip_spaces(end) == '\0'
-			&& number >= INT32_MIN && number <= INT32_MAX)
+			&& number >= INT_LEAST32_MIN && number <= INT_LEAST32_MAX)
 		{
-			*result = (int32_t)number;
+			*result = (int_least32_t)number;
 			valid = true;
 		}
 	}
@@ -103,7 +107,7 @@ bool util_read_key(Key* key)
 			errno = 0;
 			const long number = strtol(position, &end, 10);
 
-			if (end == position || errno != 0 || number < 0 || number > UINT8_MAX)
+			if (end == position || errno != 0 || number < 0 || number > KEY_MAX)
 			{
 				ok = false;
 			}
@@ -117,11 +121,11 @@ bool util_read_key(Key* key)
 
 		if (ok && *skip_spaces(position) == '\0')
 		{
-			key->keyA = (uint8_t)fields[0];
-			key->keyB = (uint8_t)fields[1];
-			key->keyC = (uint8_t)fields[2];
-			key->keyD = (uint8_t)fields[3];
-			key->keyE = (uint8_t)fields[4];
+			key->keyA = (uint_least8_t)fields[0];
+			key->keyB = (uint_least8_t)fields[1];
+			key->keyC = (uint_least8_t)fields[2];
+			key->keyD = (uint_least8_t)fields[3];
+			key->keyE = (uint_least8_t)fields[4];
 			valid = true;
 		}
 	}
@@ -129,11 +133,11 @@ bool util_read_key(Key* key)
 	return valid;
 }
 
-void util_print_pair(Key key, int32_t data, void* user)
+void util_print_pair(Key key, int_least32_t data, void* user)
 {
 	size_t* count = user;
 
-	printf("Kljuc: (%" PRIu8 " %" PRIu8 " %" PRIu8 " %" PRIu8 " %" PRIu8 ") -> Vrijednost: %" PRId32 "\n",
+	printf("Kljuc: (%" PRIuLEAST8 " %" PRIuLEAST8 " %" PRIuLEAST8 " %" PRIuLEAST8 " %" PRIuLEAST8 ") -> Vrijednost: %" PRIdLEAST32 "\n",
 		key.keyA, key.keyB, key.keyC, key.keyD, key.keyE, data);
 
 	(*count)++;

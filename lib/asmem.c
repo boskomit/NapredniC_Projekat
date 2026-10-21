@@ -6,7 +6,7 @@
 struct node
 {
 	Key key;
-	int32_t data;
+	int_least32_t data;
 	struct node* next;
 };
 
@@ -21,7 +21,7 @@ static bool key_equal(Key key1, Key key2)
 		&& key1.keyE == key2.keyE);
 }
 
-AsmemStatus asmem_insert(Key key, int32_t data)
+AsmemStatus asmem_insert(Key key, int_least32_t data)
 {
 	AsmemStatus status = ASMEM_OK;
 	const struct node* current = head;
@@ -55,7 +55,7 @@ AsmemStatus asmem_insert(Key key, int32_t data)
 	return status;
 }
 
-AsmemStatus asmem_find_data(Key key, int32_t* result)
+AsmemStatus asmem_find_data(Key key, int_least32_t* result)
 {
 	AsmemStatus status = ASMEM_NOT_FOUND;
 

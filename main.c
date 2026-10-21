@@ -11,10 +11,10 @@
  * KRATAK OPIS RJESENJA
  * Projekat ima tri modula:
  *  - lib/asmem.h, lib/asmem.c: biblioteka (libasmem.so). Kljuc je struktura Key sa
- *    pet polja tipa uint8_t, a vrijednost je int32_t. Parovi se cuvaju u jednostruko
+ *    pet polja tipa uint_least8_t, a vrijednost je int_least32_t. Parovi se cuvaju u jednostruko
  *    povezanoj listi. Biblioteka nudi: asmem_insert, asmem_find_data, asmem_delete,
  *    asmem_foreach i asmem_destroy. Rezultat operacija se vraca kao AsmemStatus
- *    (enum sa fiksnim tipom uint8_t, mogucnost C23 standarda).
+ *    (enum sa fiksnim tipom uint_least8_t, mogucnost C23 standarda).
  *    Biblioteka NE obavlja nikakav unos/ispis.
  *  - util.h, util.c: pomocne funkcije glavnog programa: unos sa provjerom
  *    ispravnosti (util_read_int32, util_read_key), ispis jednog para
@@ -54,8 +54,11 @@
  *     je oznaceno komentarom uz dlsym pozive.
  *
  * PRETPOSTAVKE O PLATFORMI (arhitekturi i kompajleru)
- *  - Tipovi uint8_t i int32_t moraju postojati (CHAR_BIT == 8). Na platformama bez
- *    njih kod se ne prevodi (greska pri prevodjenju, ne tiha greska).
+ *  - Koriste se tipovi uint_least8_t i int_least32_t, koje standard garantuje na
+ *    svakoj platformi (tipovi tacne sirine uint8_t i int32_t nisu obavezni). Opseg
+ *    kljuca je tacno 0-255 (provjerava se eksplicitno, ne preko velicine tipa), a
+ *    vrijednost ima najmanje 32 bita. Biblioteka je cist ISO C; POSIX (dlfcn.h)
+ *    koristi samo glavni program.
  *  - Program ne zavisi od poretka bajtova (endianness) niti od poravnanja i
  *    popunjavanja struktura: kljucevi se porede polje po polje, a ne sa memcmp.
  *  - Key i AsmemStatus prelaze granicu biblioteke po vrijednosti, pa biblioteka i
@@ -65,7 +68,8 @@
  *
  * PRETPOSTAVKE I OGRANICENJA
  *  - Kljuc cini pet vrijednosti 0-255; dva kljuca su jednaka ako su sva polja jednaka.
- *  - Vrijednost je int32_t. Biblioteka nije generalna po tipu vrijednosti.
+ *  - Vrijednost je int_least32_t (najmanje 32 bita). Biblioteka nije generalna po
+ *    tipu vrijednosti.
  *  - Ako kljuc vec postoji, asmem_insert ga ne mijenja i vraca ASMEM_KEY_EXISTS.
  *    Da bi se vrijednost promijenila, par se prvo obrise pa ponovo unese.
  *  - Broj parova je ogranicen samo raspolozivom memorijom (svaki par se zasebno
@@ -74,7 +78,7 @@
  *  - Korisnicki unos se cita po redovima (fgets, bafer od 128 znakova) i parsira
  *    sa strtol. Redovi duzi od 127 znakova se odbacuju kao neispravni. Kljuc je
  *    tacno pet cijelih brojeva 0-255 odvojenih razmacima, a vrijednost i izbor iz
- *    menija su cijeli brojevi u opsegu int32_t. Neispravan unos ne mijenja stanje
+ *    menija su cijeli brojevi u opsegu int_least32_t. Neispravan unos ne mijenja stanje
  *    liste. Kraj ulaza (EOF) se tretira kao izlaz iz programa.
  *  - Asserti u biblioteci se iskljucuju sa -DNDEBUG; provjere argumenata koje
  *    slijede iza njih (npr. result == NULL) ostaju aktivne.
@@ -106,7 +110,7 @@
  *  Ispostovano: svaka funkcija ima jednu izlaznu tacku (15.5), exit se ne koristi
  *  (21.8), sve if/else/petlje imaju zagrade, svaki if ... else if lanac zavrsava sa
  *  else (15.7), svaki switch ima default i svaka grana zavrsava sa break, nema goto
- *  ni rekurzije, koriste se tipovi fiksne sirine (uint8_t, int32_t), bool iz C23.
+ *  ni rekurzije, koriste se tipovi iz <stdint.h> (uint_least8_t, int_least32_t), bool iz C23.
  *
  * TESTIRANJE
  * U fajlu test.txt se nalazi 30 testnih slucaja koji testiraju sve vrste ulaza
@@ -124,8 +128,8 @@
 
 #include <dlfcn.h>
 
-static AsmemStatus (*insert)(Key, int32_t) = NULL;
-static AsmemStatus (*find_data)(Key, int32_t*) = NULL;
+static AsmemStatus (*insert)(Key, int_least32_t) = NULL;
+static AsmemStatus (*find_data)(Key, int_least32_t*) = NULL;
 static AsmemStatus (*delete)(Key) = NULL;
 static void (*foreach)(AsmemVisitFn, void*) = NULL;
 static void (*destroy)(void) = NULL;
@@ -152,12 +156,12 @@ int main(void)
 		/* Neprenosivo: void* -> pokazivac na funkciju (POSIX), vidi komentar na pocetku. */
 		/* Vazi za sve dlsym pozive */
 		dlerror();
-		insert = (AsmemStatus (*)(Key, int32_t)) dlsym(library, "asmem_insert");
+		insert = (AsmemStatus (*)(Key, int_least32_t)) dlsym(library, "asmem_insert");
 		error = dlerror();
 		loaded = !util_check_error(error) && loaded;
 
 		dlerror();
-		find_data = (AsmemStatus (*)(Key, int32_t*)) dlsym(library, "asmem_find_data");
+		find_data = (AsmemStatus (*)(Key, int_least32_t*)) dlsym(library, "asmem_find_data");
 		error = dlerror();
 		loaded = !util_check_error(error) && loaded;
 
@@ -184,9 +188,9 @@ int main(void)
 		}
 	}
 
-	int32_t choice = 0;
+	int_least32_t choice = 0;
 	Key key = {};
-	int32_t data = 0;
+	int_least32_t data = 0;
 	AsmemStatus ret = ASMEM_OK;
 	size_t count = 0U;
 
@@ -264,7 +268,7 @@ int main(void)
 					}
 					else if (ret == ASMEM_OK)
 					{
-						printf("Vrijednost: %" PRId32 "\n", data);
+						printf("Vrijednost: %" PRIdLEAST32 "\n", data);
 					}
 					else
 					{
